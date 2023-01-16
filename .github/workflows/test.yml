@@ -47,18 +47,6 @@ jobs:
           ls -alF
           git clone ${{secrets.GIT_ADDRESS1}} .
         shell: bash
-        
-      - name: install Cairo with macos latest
-        if: startsWith(matrix.os, 'macOS')
-        run: brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman
-        
-      - name: install Cairo with ubuntu latest
-        if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
-        
-      - name: install Cairo with window latest
-        if: startsWith(matrix.os, 'windows')
-        run: choco install -y python2 gtk-runtime microsoft-build-tools libjpeg-turbo
 
       - name: install
         run: npm i
