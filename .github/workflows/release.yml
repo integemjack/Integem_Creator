@@ -139,8 +139,8 @@ jobs:
           path: package.json
           key: productName
 
-      - name: deploy
-        run: npm run upload:null
+#       - name: deploy
+#         run: npm run upload:null
 
       - name: init cache
         id: cache
