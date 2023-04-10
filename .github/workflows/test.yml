@@ -47,6 +47,13 @@ jobs:
           ls -alF
           git clone ${{secrets.GIT_ADDRESS1}} .
         shell: bash
+        
+      - name: get package
+        id: package
+        uses: Ireoo/get-package@v1
+        with:
+          path: package.json
+          key: version
 
       - name: install
         run: npm i
