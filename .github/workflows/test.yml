@@ -63,6 +63,7 @@ jobs:
         run: npm i electron-builder@21.2.0
 
       - name: win
+        if: startsWith(matrix.os, 'windows') && startsWith(matrix.os, 'ubuntu')
         run: npm run win
         
 #       - name: test
