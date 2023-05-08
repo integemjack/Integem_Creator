@@ -58,13 +58,25 @@ jobs:
       - name: install
         run: npm i
 
-      - name: install electron-builder with macos latest
-        if: startsWith(matrix.os, 'macOS')
-        run: npm i electron-builder@21.2.0
+#       - name: install electron-builder with macos latest
+#         if: startsWith(matrix.os, 'macOS')
+#         run: npm i electron-builder@21.2.0
 
       - name: win
         if: startsWith(matrix.os, 'windows') && startsWith(matrix.os, 'ubuntu')
         run: npm run win
+        
+      - name: build:pure
+        if: startsWith(matrix.os, 'macOS')
+        run: npm run build:pure
+        
+      - name: mac:dmg
+        if: startsWith(matrix.os, 'macOS')
+        run: npm run mac:dmg
+        
+      - name: mac:mas
+        if: startsWith(matrix.os, 'macOS')
+        run: npm run mac:mas
         
 #       - name: test
 #         run: /usr/bin/python --version
