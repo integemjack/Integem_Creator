@@ -181,5 +181,5 @@ jobs:
           exts: '["exe", "dmg", "zip", "AppImage", "deb", "rpm", "apk", "msi", "pkg", "appx"]'
           suffix: _tools
           
-      - name: Upload to tools.integem.com
-        run: npm run upload
+#       - name: Upload to tools.integem.com
+#         run: npm run upload
