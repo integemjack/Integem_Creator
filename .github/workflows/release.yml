@@ -120,7 +120,13 @@ jobs:
 #         run: npm i electron-builder@21.2.0
 
       - name: win
-        if: startsWith(matrix.os, 'windows') && startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          npm run win
+          npm run build
+          
+      - name: linux
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           npm run win
           npm run build
