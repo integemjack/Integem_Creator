@@ -69,7 +69,12 @@ jobs:
       - name: build:pure
         if: startsWith(matrix.os, 'macOS')
         run: npm run build:pure
-        
+      
+      - name: Install Perl Modules
+        if: startsWith(matrix.os, 'macOS')
+        run: |
+          sudo cpan install Mac::Finder::DSStore
+          
       - name: mac:dmg
         if: startsWith(matrix.os, 'macOS')
         run: npm run mac:dmg
