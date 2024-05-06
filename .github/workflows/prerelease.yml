@@ -187,7 +187,7 @@ jobs:
         with:
           upload_url: ${{ steps.cache.outputs.upload_url }}
           dir: build
-          exts: '["exe", "dmg", "zip", "AppImage", "deb", "rpm", "apk", "msi", "pkg", "appx"]'
+          exts: '["exe", "dmg", "zip", "AppImage", "deb", "rpm", "apk", "msi", "pkg", "appx", "yml"]'
           suffix: _tools
           
 #       - name: Upload to tools.integem.com
