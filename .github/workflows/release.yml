@@ -142,10 +142,14 @@ jobs:
         
       - name: mac:dmg
         if: startsWith(matrix.os, 'macOS')
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: npm run mac:dmg
         
       - name: mac:mas
         if: startsWith(matrix.os, 'macOS')
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: npm run mac:mas
 
       - name: get package version
