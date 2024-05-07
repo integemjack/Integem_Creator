@@ -191,6 +191,7 @@ jobs:
           suffix: _tools
 
       - name: Upload yml
+        if: startsWith(matrix.os, 'windows')
         uses: Ireoo/upload-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
