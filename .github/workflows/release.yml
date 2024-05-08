@@ -179,6 +179,11 @@ jobs:
           git clone $git_cache cache
           cd cache
           echo "::set-output name=upload_url::$(cat $github_sha.txt)"
+
+      - name: Remove builder-debug.yml
+        shell: bash
+        run: |
+          [ -f ./build/builder-debug.yml ] && rm ./build/builder-debug.yml
           
       - name: Upload Release
         uses: Ireoo/upload-release@v2
