@@ -180,6 +180,11 @@ jobs:
           cd cache
           echo "::set-output name=upload_url::$(cat $github_sha.txt)"
           
+      - name: Remove builder-debug.yml
+        shell: bash
+        run: |
+          [ -f ./build/builder-debug.yml ] && rm ./build/builder-debug.yml
+          
       - name: Upload Prerelease
         uses: Ireoo/upload-release@v2
         env:
