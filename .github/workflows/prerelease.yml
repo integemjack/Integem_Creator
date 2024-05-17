@@ -154,7 +154,7 @@ jobs:
             build/*.dmg
             build/*.zip
             build/*.AppImage
-            buildl/*.pkg
+            build/*.pkg
             build/latest-mac.yml
             build/*.deb
             build/*.rpm
