@@ -71,7 +71,7 @@ jobs:
      
 
   tools:
-    needs: [release]
+    needs: [testRelease]
 
     runs-on: ${{matrix.os}}
     
