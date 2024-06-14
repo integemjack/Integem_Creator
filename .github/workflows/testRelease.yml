@@ -144,7 +144,7 @@ jobs:
           tag_name: test_v${{steps.package.outputs.version}}
           name: test_v${{steps.package.outputs.version}}
           draft: false
-          prerelease: false
+          prerelease: true
           fail_on_unmatched_files: false
           append_body: true
           files: |
