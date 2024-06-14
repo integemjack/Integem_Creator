@@ -1,4 +1,4 @@
-name: Prerelease
+name: testRelease
 
 # on:
 #   schedule:
@@ -7,8 +7,8 @@ name: Prerelease
 on: [workflow_dispatch]
 
 jobs:
-  prerelease:
-    name: Prerelease
+  testRelease:
+    name: testRelease
 
     runs-on: macOS-latest
 
@@ -42,7 +42,7 @@ jobs:
           key: version
      
   tools:
-    needs: [prerelease]
+    needs: [testRelease]
 
     runs-on: ${{matrix.os}}
     
