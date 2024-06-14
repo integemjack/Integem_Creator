@@ -1,4 +1,4 @@
-name: testRelease
+name: Prerelease
 
 # on:
 #   schedule:
@@ -7,8 +7,8 @@ name: testRelease
 on: [workflow_dispatch]
 
 jobs:
-  testRelease:
-    name: testRelease
+  prerelease:
+    name: Prerelease
 
     runs-on: macOS-latest
 
@@ -31,7 +31,7 @@ jobs:
           rm -rf .git
           rm -rf .github
           ls -alF
-          git clone --depth 1 ${{secrets.GIT_ADDRESS1}} .
+          git clone -b blockly1 --depth 1 ${{secrets.GIT_ADDRESS1}} .
         shell: bash
 
       - name: get package
@@ -40,38 +40,9 @@ jobs:
         with:
           path: package.json
           key: version
-
-      - name: create release
-        id: release
-        uses: actions/create-release@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          tag_name: test_v${{steps.package.outputs.version}}
-          release_name: test_V${{steps.package.outputs.version}}
-          draft: false
-          prerelease: false
-          release: false
-
-      - name: init cache
-        env:
-          git_cache: ${{secrets.GIT_CACHE}}
-          upload_url: ${{steps.release.outputs.upload_url}}
-          github_sha: ${{github.sha}}
-        run: |
-          git config --global user.email "jack.wang@integem.com"
-          git config --global user.name "Jack Wang"
-          git config --global -l
-          git clone $git_cache cache
-          cd cache
-          echo "$upload_url" > $github_sha.txt
-          git add $github_sha.txt
-          git commit -m "$github_sha"
-          git push
      
-
   tools:
-    needs: [testRelease]
+    needs: [prerelease]
 
     runs-on: ${{matrix.os}}
     
@@ -109,7 +80,7 @@ jobs:
           rm -rf .git
           rm -rf .github
           ls -alF
-          git clone --depth 1 ${{secrets.GIT_ADDRESS1}} .
+          git clone -b blockly1 --depth 1 ${{secrets.GIT_ADDRESS1}} .
         shell: bash
 
       - name: install
@@ -167,34 +138,48 @@ jobs:
           path: package.json
           key: productName
 
+      - name: Upload Prerelease
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: test_v${{steps.package.outputs.version}}
+          name: test_v${{steps.package.outputs.version}}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: false
+          append_body: true
+          files: |
+            build/*.exe
+            build/*.msi
+            build/latest.yml
+            build/*.dmg
+            build/*.zip
+            build/*.AppImage
+            build/*.pkg
+            build/latest-mac.yml
+            build/*.deb
+            build/*.rpm
+            build/*.apk
+            build/latest-linux.yml
+
+
 #       - name: deploy
 #         run: npm run upload:null
 
-      - name: init cache
-        id: cache
-        shell: bash
-        env:
-          git_cache: ${{secrets.GIT_CACHE}}
-          github_sha: ${{github.sha}}
-        run: |
-          git clone $git_cache cache
-          cd cache
-          echo "::set-output name=upload_url::$(cat $github_sha.txt)"
-
-      - name: Remove builder-debug.yml
-        shell: bash
-        run: |
-          [ -f ./build/builder-debug.yml ] && rm ./build/builder-debug.yml
           
-      - name: Upload Release
-        uses: Ireoo/upload-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.cache.outputs.upload_url }}
-          dir: build
-          exts: '["exe", "dmg", "zip", "AppImage", "deb", "rpm", "apk", "msi", "pkg", "appx", "yml"]'
-          # suffix: _tools
+      # - name: Remove builder-debug.yml
+      #   shell: bash
+      #   run: |
+      #     [ -f ./build/builder-debug.yml ] && rm ./build/builder-debug.yml
+          
+      # - name: Upload Prerelease
+      #   uses: Ireoo/upload-release@v2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.cache.outputs.upload_url }}
+      #     dir: build
+      #     exts: '["exe", "dmg", "zip", "AppImage", "deb", "rpm", "apk", "msi", "pkg", "appx", "yml"]'
+      #     suffix: _tools
           
 #       - name: Upload to tools.integem.com
 #         run: npm run upload
