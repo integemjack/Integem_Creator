@@ -71,7 +71,7 @@ jobs:
           rm -rf .git
           rm -rf .github
           ls -alF
-          git clone -b feature-add-animation --depth 1 ${{secrets.GIT_ADDRESS1}} .
+          git clone -b feature-scratch --depth 1 ${{secrets.GIT_ADDRESS1}} .
         shell: bash
 
       - name: install
