@@ -1,4 +1,4 @@
-name: featAddAnimations
+name: featScratch
 
 # on:
 #   schedule:
@@ -7,8 +7,8 @@ name: featAddAnimations
 on: [workflow_dispatch]
 
 jobs:
-  featAddAnimations:
-    name: featAddAnimations
+  featScratch:
+    name: featScratch
 
     runs-on: macOS-latest
 
@@ -27,7 +27,7 @@ jobs:
           rm -rf .git
           rm -rf .github
           ls -alF
-          git clone -b feature-add-animation --depth 1 ${{secrets.GIT_ADDRESS1}} .
+          git clone -b feature-scratch --depth 1 ${{secrets.GIT_ADDRESS1}} .
         shell: bash
 
       - name: get package
@@ -38,7 +38,7 @@ jobs:
           key: version
      
   tools:
-    needs: [featAddAnimations]
+    needs: [featScratch]
 
     runs-on: ${{matrix.os}}
     
