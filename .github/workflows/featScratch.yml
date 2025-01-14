@@ -127,8 +127,8 @@ jobs:
       - name: Upload Prerelease
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: featAnimations_v${{steps.package.outputs.version}}
-          name: featAnimations_v${{steps.package.outputs.version}}
+          tag_name: featScratch_v${{steps.package.outputs.version}}
+          name: featScratch_v${{steps.package.outputs.version}}
           draft: false
           prerelease: true
           fail_on_unmatched_files: false
