@@ -1,0 +1,199 @@
+name: HotfixWmic
+
+# on:
+#   schedule:
+#     # * is a special character in YAML so you have to quote this string
+#     - cron: "5 * * * *"
+on: [workflow_dispatch]
+
+jobs:
+  HotfixWmic:
+    name: HotfixWmic
+
+    runs-on: macOS-latest
+
+    steps:
+
+      - name: init
+        uses: actions/checkout@v1
+      
+#       - name: get sha
+#         id: sha
+#         shell: bash
+#         run: echo "::set-output name=value::$(cat sha.txt)"
+
+      - name: clone
+        env:
+          sha: ${{steps.sha.outputs.value}} 
+        run: |
+          ls -alF
+          rm -rf *
+          rm -rf .git
+          rm -rf .github
+          ls -alF
+          git clone --depth 1 ${{secrets.GIT_ADDRESS1}} .
+        shell: bash
+
+      - name: get package
+        id: package
+        uses: Ireoo/get-package@v1
+        with:
+          path: package.json
+          key: version
+
+      - name: create release
+        id: release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          tag_name: v${{steps.package.outputs.version}}
+          release_name: V${{steps.package.outputs.version}}
+          draft: false
+          prerelease: false
+
+      - name: init cache
+        env:
+          git_cache: ${{secrets.GIT_CACHE}}
+          upload_url: ${{steps.release.outputs.upload_url}}
+          github_sha: ${{github.sha}}
+        run: |
+          git config --global user.email "jack.wang@integem.com"
+          git config --global user.name "Jack Wang"
+          git config --global -l
+          git clone $git_cache cache
+          cd cache
+          echo "$upload_url" > $github_sha.txt
+          git add $github_sha.txt
+          git commit -m "$github_sha"
+          git push
+     
+
+  tools:
+    needs: [HotfixWmic]
+
+    runs-on: ${{matrix.os}}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [16]
+        os: [ubuntu-latest, macOS-12, windows-latest]
+
+    steps:
+      - name: init
+        uses: actions/checkout@master
+
+      - name: set node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          
+      - name: set python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8" 
+
+#       - name: get sha
+#         id: sha
+#         shell: bash
+#         run: echo "::set-output name=value::$(cat sha.txt)"
+
+      - name: clone
+        env:
+          sha: ${{steps.sha.outputs.value}} 
+        run: |
+          ls -alF
+          rm -rf *
+          rm -rf .git
+          rm -rf .github
+          ls -alF
+          git clone -b hotfix/wmic-issue-fix --depth 1 ${{secrets.GIT_ADDRESS1}} .
+        shell: bash
+
+      - name: install
+        run: |
+         npm i
+
+#       - name: install electron-builder with macos latest
+#         if: startsWith(matrix.os, 'macOS')
+#         run: npm i electron-builder@21.2.0
+
+      - name: win
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          npm run win
+          npm run build
+          
+      - name: linux
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          npm run win
+          npm run build
+        
+      - name: build:pure
+        if: startsWith(matrix.os, 'macOS')
+        run: npm run build:pure
+      
+      # - name: Install Perl Modules
+      #   if: startsWith(matrix.os, 'macOS')
+      #   run: |
+      #     sudo cpan install Mac::Finder::DSStore
+        
+      - name: mac:dmg
+        if: startsWith(matrix.os, 'macOS')
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: npm run mac:dmg
+        
+      - name: mac:mas
+        if: startsWith(matrix.os, 'macOS')
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: npm run mac:mas
+
+      - name: get package version
+        id: package
+        uses: Ireoo/get-package@v1
+        with:
+          path: ./package.json
+          key: version
+
+      - name: get package productName
+        id: package1
+        uses: Ireoo/get-package@v1
+        with:
+          path: package.json
+          key: productName
+
+#       - name: deploy
+#         run: npm run upload:null
+
+      - name: init cache
+        id: cache
+        shell: bash
+        env:
+          git_cache: ${{secrets.GIT_CACHE}}
+          github_sha: ${{github.sha}}
+        run: |
+          git clone $git_cache cache
+          cd cache
+          echo "::set-output name=upload_url::$(cat $github_sha.txt)"
+
+      - name: Remove builder-debug.yml
+        shell: bash
+        run: |
+          [ -f ./build/builder-debug.yml ] && rm ./build/builder-debug.yml
+          
+      - name: Upload Release
+        uses: Ireoo/upload-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.cache.outputs.upload_url }}
+          dir: build
+          exts: '["exe", "dmg", "zip", "AppImage", "deb", "rpm", "apk", "msi", "pkg", "appx", "yml"]'
+          # suffix: _tools
+          
+#       - name: Upload to tools.integem.com
+#         run: npm run upload
