@@ -31,7 +31,7 @@ jobs:
           rm -rf .git
           rm -rf .github
           ls -alF
-          git clone --depth 1 ${{secrets.GIT_ADDRESS1}} .
+          git clone -b hotfix/wmic-issue-fix --depth 1 ${{secrets.GIT_ADDRESS1}} .
         shell: bash
 
       - name: get package
